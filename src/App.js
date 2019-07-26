@@ -16,7 +16,7 @@ class App extends Component {
         this.state = {
             locationName: '',
             gpsCoords: {},
-            condition: ''
+            searchKeywords: ''
         };
         this.handleFormChangeLocation = this.handleFormChangeLocation.bind(this);
         this.handleFormChangeCondition = this.handleFormChangeCondition.bind(this);
@@ -41,8 +41,8 @@ class App extends Component {
             });
     }
 
-    fetchData(url) {
-        fetch('http://localhost:3000/api/query/study_fields?expr=heart+attack&fields=NCTId,Condition,BriefTitle&fmt=JSON')
+    fetchData() {
+        fetch(`http://localhost:3000/api/query/study_fields?expr=${this.state.searchKeywords}&fields=NCTId,Condition,LeadSponsorName,LocationFacility,BriefTitle,InterventionName,CollaboratorName,LocationCity,OverallStatus,PrimaryOutcomeMeasure,StartDate,LocationState,StudyType,StudyFirstSubmitDate,PrimaryCompletionDate,LocationCountry&fmt=JSON`)
             .then(response => response.json())
             .then((json) => {
                 console.log(json);
@@ -56,7 +56,11 @@ class App extends Component {
     }
 
     handleFormChangeCondition(event) {
-        this.setState({condition: event.target.value})
+        const userEnteredString = event.target.value.replace(' ', '+')
+        this.setState({searchKeywords: userEnteredString}, () => {
+            console.log(this.state.searchKeywords);
+            this.fetchData();
+        })
     }
 
     componentDidMount() {
