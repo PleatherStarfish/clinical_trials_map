@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import TextField from '@material-ui/core/TextField'
 import Form from './Form.js';
 import Map from './Map.js';
 import './App.css';
@@ -42,8 +41,14 @@ class App extends Component {
             });
     }
 
-    fetchData() {
-
+    fetchData(url) {
+        fetch('http://localhost:3000/api/query/study_fields?expr=heart+attack&fields=NCTId,Condition,BriefTitle&fmt=JSON')
+            .then(response => response.json())
+            .then((json) => {
+                console.log(json);
+                let clinicalTrialsData = json.above;
+            })
+            .catch(err => console.log(err));
     }
 
     handleFormChangeLocation(event) {
