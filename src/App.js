@@ -20,6 +20,7 @@ class App extends Component {
         };
         this.handleFormChangeLocation = this.handleFormChangeLocation.bind(this);
         this.handleFormChangeCondition = this.handleFormChangeCondition.bind(this);
+        this.handleBlur = this.handleBlur.bind(this);
         this.getLocation = this.getLocation.bind(this);
         this.fetchData = this.fetchData.bind(this);
     }
@@ -42,7 +43,7 @@ class App extends Component {
     }
 
     fetchData() {
-        fetch(`http://localhost:3000/api/query/study_fields?expr=${this.state.searchKeywords}&fields=NCTId,Condition,LeadSponsorName,LocationFacility,BriefTitle,InterventionName,CollaboratorName,LocationCity,OverallStatus,PrimaryOutcomeMeasure,StartDate,LocationState,StudyType,StudyFirstSubmitDate,PrimaryCompletionDate,LocationCountry&fmt=JSON`)
+        fetch(`http://localhost:3000/api/query/study_fields?expr=${this.state.searchKeywords}&area=AREA[LocationCity]Boston&fields=NCTId,Condition,LeadSponsorName,LocationFacility,BriefTitle,InterventionName,CollaboratorName,LocationCity,OverallStatus,PrimaryOutcomeMeasure,StartDate,LocationState,StudyType,StudyFirstSubmitDate,PrimaryCompletionDate,LocationCountry&fmt=JSON`)
             .then(response => response.json())
             .then((json) => {
                 console.log(json);
@@ -52,15 +53,22 @@ class App extends Component {
     }
 
     handleFormChangeLocation(event) {
-        this.setState({locationName: event.target.value})
+        this.setState({locationName: event.target.value}, () => {
+            console.log(`Location state: ${this.state.searchKeywords}`);
+        })
     }
 
     handleFormChangeCondition(event) {
-        const userEnteredString = event.target.value.replace(' ', '+')
+
+        // Format user-entered search terms
+        const userEnteredString = event.target.value.replace(' ', '+');
         this.setState({searchKeywords: userEnteredString}, () => {
-            console.log(this.state.searchKeywords);
-            this.fetchData();
+            console.log(`Condition state: ${this.state.searchKeywords}`);
         })
+    }
+
+    handleBlur() {
+        this.fetchData();
     }
 
     componentDidMount() {
@@ -84,6 +92,7 @@ class App extends Component {
                             id={'text-field-location'}
                             label={'Enter a location'}
                             handleFormChange={this.handleFormChangeLocation}
+                            handleBlur={this.handleBlur}
                             location={this.state.location}
                         />
                     </div>
@@ -95,12 +104,14 @@ class App extends Component {
                             id={'text-field-condition'}
                             label={'Enter a condition or disease'}
                             handleFormChange={this.handleFormChangeCondition}
+                            onBlur={this.handleBlur}
                             location={this.state.location}
                         />
                     </div>
                 </div>
 
                 <Map />
+
             </div>
         );
     }

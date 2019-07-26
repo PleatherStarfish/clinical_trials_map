@@ -11,6 +11,7 @@ function Form(props) {
             }}
             value={ props.location }
             onChange={ props.handleFormChange }
+            onBlur={ props.handleBlur }
         />
     );
 }
